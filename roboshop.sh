@@ -2,6 +2,8 @@
 
 SG_ID="sg-092f9baf10de817bb"
 AMI_ID="ami-0220d79f3f480ecf5"
+HOSTED_ZONE_ID="Z03921621E9OHYF28C7PJ"
+DOMAIN_NAME="crazycoolmaster.space"
 
 for instance in $@
 do
@@ -17,17 +19,43 @@ do
         IP=$(
             aws ec2 describe-instances \
             --instance-ids $instance_id \
-            --query 'Reservations[0].Instances[0].PublicIpAddress' \
+            --query 'Reservations[].Instances[].PublicIpAddress' \
             --output text
         )
+        RECORD_NAME="$DOMAIN_NAME"
     else
         IP=$(
             aws ec2 describe-instances \
             --instance-ids $instance_id \
-            --query 'Reservations[0].Instances[0].PrivateIpAddress' \
+            --query 'Reservations[].Instances[].PrivateIpAddress' \
             --output text
         )
+        RECORD_NAME="$instance.$DOMAIN_NAME"
     fi
 
     echo "IP Address: $IP"
-done
+
+    aws route53 change-resource-record-sets \
+    --hosted-zone-id $HOSTED_ZONE_ID 
+    --change-batch '
+    {
+    "Comment": "Update A record for www.example.com",
+        "Changes": [
+            {
+                "Action": "UPSERT",
+                "ResourceRecordSet": {
+                    "Name": "'$RECORD_NAME'",
+                    "Type": "A",
+                    "TTL": 1,
+                    "ResourceRecords": [
+                        {
+                            "Value": "'$IP'"
+                        }
+                    ]
+                }
+            }
+        ]
+    }'
+
+    echo "Record created for $insance"
+ done   
