@@ -58,5 +58,5 @@ do
     }
     '
 
-    echo "Record created for $insance"
+    echo "Record updated for: $insance"
  done   
