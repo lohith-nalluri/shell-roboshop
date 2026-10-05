@@ -55,7 +55,8 @@ do
                 }
             }
         ]
-    }'
+    }
+    '
 
     echo "Record created for $insance"
  done   
