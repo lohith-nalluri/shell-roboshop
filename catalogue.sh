@@ -8,7 +8,10 @@ R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
-SCRIPT_DIRE=$pwd
+SCRIPT_DIRE=$PWD
+MONGODB_HOST=mongodb-dev.crazycoolmaster.space
+
+
 if [ $USERID -ne 0 ]; then
     echo -e "$R Please run this script with root user access $N" | tee -a $LOGS_FILE
     exit 1
@@ -60,7 +63,7 @@ VALIDATE $? "Extracting catalogue application code"
 npm install &>> $LOGS_FILE
 VALIDATE $? "Installing catalogue application dependencies"
 
-cp catalogue.service /etc/systemd/system/catalogue.service
+cp $SCRIPT_DIRE/catalogue.service /etc/systemd/system/catalogue.service
 VALIDATE $? "Created systemctl service"
 
 systemctl daemon-reload &>> $LOGS_FILE
@@ -68,3 +71,8 @@ systemctl daemon-reload &>> $LOGS_FILE
 systemctl enable catalogue &>> $LOGS_FILE
 systemctl start catalogue &>> $LOGS_FILE
 VALIDATE $? "Starting catalogue service"
+
+cp $SCRIPT_DIRE/mongo.repo /etc/yum.repos.d/mongo.repo
+dnf install mongodb-mongosh -y
+
+mongosh --host $MONGODB_HOST </app/schema/catalogue.js &>> $LOGS_FILE
