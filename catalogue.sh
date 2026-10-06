@@ -66,10 +66,10 @@ VALIDATE $? "Installing catalogue application dependencies"
 cp $SCRIPT_DIRE/catalogue.service /etc/systemd/system/catalogue.service
 VALIDATE $? "Created systemctl service"
 
-systemctl daemon-reload &>> $LOGS_FILE
+systemctl daemon-reload 
 
 systemctl enable catalogue &>> $LOGS_FILE
-systemctl start catalogue &>> $LOGS_FILE
+systemctl start catalogue 
 VALIDATE $? "Starting catalogue service"
 
 cp $SCRIPT_DIRE/mongo.repo /etc/yum.repos.d/mongo.repo
