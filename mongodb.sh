@@ -3,7 +3,6 @@
 USERID=$(id -u)
 LOGS_FOLDER="/var/log/shell-roboshop"
 LOGS_FILE="$LOGS_FOLDER/$0.log"
-
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
@@ -25,21 +24,20 @@ VALIDATE(){
     fi
 }
 
+cp mongo.repo /etc/yum.repos.d/mongo.repo
+VALIDATE $? "Copying Mongo Repo" 
 
-cp mongo.repo /etc/yum.repos.d/mongo.repo 
-VALIDATE $? "Adding MongoDB repo"
+dnf install mongodb-org -y &>>$LOGS_FILE
+VALIDATE $? "Installing MongoDB server"
 
-dnf install mongodb-org -y &>> $LOGS_FILE
-VALIDATE $? "Installing MongoDB Server"
-
-systemctl enable mongod &>> $LOGS_FILE
-VALIDATE $? "Enabling MongoDB Service"
+systemctl enable mongod &>>$LOGS_FILE
+VALIDATE $? "Enable MongoDB"
 
 systemctl start mongod
-VALIDATE $? "Starting MongoDB Service"
+VALIDATE $? "Start MongoDB"
 
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
-VALIDATE $? "Allowing MongoDB to listen on all interfaces or Allowing remote connections"
+VALIDATE $? "Allowing remote connections"
 
 systemctl restart mongod
-VALIDATE $? "Restarting MongoDB Service"
+VALIDATE $? "Restarted MongoDB"
