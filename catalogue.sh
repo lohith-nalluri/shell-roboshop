@@ -8,7 +8,7 @@ R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
-SCRIPT_DIRE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIRE=$PWD
 MONGODB_HOST=mongodb-dev.crazycoolmaster.space
 
 
@@ -63,8 +63,8 @@ VALIDATE $? "Extracting catalogue application code"
 npm install &>> $LOGS_FILE
 VALIDATE $? "Installing catalogue application dependencies"
 
-cp "$SCRIPT_DIRE/mongo.repo" /etc/yum.repos.d/mongo.repo
-VALIDATE $? "Copying MongoDB repository file"
+cp $SCRIPT_DIRE/catalogue.service /etc/systemd/system/catalogue.service
+VALIDATE $? "Copying catalogue service file"
 
 systemctl daemon-reload 
 
