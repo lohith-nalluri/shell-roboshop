@@ -69,10 +69,11 @@ VALIDATE $? "Copying catalogue service file"
 systemctl daemon-reload 
 
 systemctl enable catalogue &>> $LOGS_FILE
+
 systemctl start catalogue 
 VALIDATE $? "Starting catalogue service"
 
 cp $SCRIPT_DIRE/mongo.repo /etc/yum.repos.d/mongo.repo
 dnf install mongodb-mongosh -y
 
-mongosh --host $MONGODB_HOST </app/schema/catalogue.js &>> $LOGS_FILE
+mongosh --host $MONGODB_HOST </app/schema/master-data.js &>> $LOGS_FILE
